@@ -1,0 +1,80 @@
+drop database if exists dbpruebapractica;
+create database dbpruebapractica;
+use dbpruebapractica;
+create table user(
+	id BIGINT(20) primary key auto_increment,
+    firstName VARCHAR(50),
+    middleName VARCHAR(50),
+    lastName VARCHAR(50),
+    mobile VARCHAR(15),
+    email VARCHAR(50),
+    passwordHash VARCHAR(42) default null,
+    registeredAt DATETIME default null,
+    lastLogin DATETIME,
+    intro TINYTEXT,
+    profile TEXT
+);
+select * from user;
+create table post(
+	id BIGINT(20) primary key,
+    authorId BIGINT(20) not null,
+    parentID BIGINT(20),
+    title VARCHAR(75) not null,
+    metaTitle VARCHAR(100),
+    slug VARCHAR(100) not null,
+    summary TINYTEXT,
+    published TINYINT(1) not null,
+    createdAt DATETIME not null,
+    updatedAt DATETIME,
+    publishedAt DATETIME,
+    content TEXT,
+    FOREIGN KEY(authorId) references user(id),
+    FOREIGN KEY(parentId) references post(id)
+);
+create table post_comment(
+	id BIGINT(20) primary key,
+    postId BIGINT(20) not null,
+    parentId BIGINT(20),
+    title VARCHAR(100),
+    published TINYINT(1),
+	createdAt DATETIME not null,
+    publishedAt DATETIME,
+    content TEXT,
+    FOREIGN KEY(postId) references post(id),
+    FOREIGN KEY(parentId) references post_comment(id)
+);
+create table post_meta(
+	id BIGINT(20) primary key,
+    postId BIGINT(20) not null,
+    keey VARCHAR(50) not null,
+    content TEXT,
+    FOREIGN KEY(postId) references post(id)
+);
+create table tag(
+	id BIGINT(20) primary key,
+    title VARCHAR(75) not null,
+    metaTitle VARCHAR(100),
+    slug VARCHAR(100) not null,
+    content TEXT
+);
+create table post_tag(
+	postId BIGINT(20),
+	tagId BIGINT(20),
+    FOREIGN KEY(postId) references post(id),
+    FOREIGN KEY(tagId) references tag(id)
+);
+create table category(
+	id BIGINT(20) primary key,
+    parentId BIGINT(20),
+    title VARCHAR(75) not null,
+    metaTitle VARCHAR(100),
+    slug VARCHAR(100) not null,
+    content TEXT,
+    FOREIGN KEY(parentId) references category(id)
+);
+create table post_category(
+	postId BIGINT(20),
+	categoryId BIGINT(20),
+    FOREIGN KEY(postId) references post(id),
+    FOREIGN KEY(categoryId) references category(id)
+);
